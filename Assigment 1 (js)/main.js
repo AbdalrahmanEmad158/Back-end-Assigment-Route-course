@@ -235,6 +235,9 @@ Used only with arrays.
 Executes a callback function for each element.
 Cannot use break or continue.
 can acess index and modify value by index 
+do not use async function inside forEach because it will not wait 
+for the async function to complete
+ before moving on to the next iteration.
 */
 
 
