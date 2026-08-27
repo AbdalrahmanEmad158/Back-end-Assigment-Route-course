@@ -1,0 +1,288 @@
+{
+  "diagramType": 2,
+  "data": {
+    "nodes": [
+      {
+        "id": "787de134-085e-4a18-8df1-c914b2135dba",
+        "type": "Table",
+        "position": {
+          "x": 770.662649356829,
+          "y": -20.741633476260226
+        },
+        "data": {
+          "label": "phone",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "9149a7d5-53a6-4890-844a-2ee14b90131e",
+              "name": "phone_id",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false
+            },
+            {
+              "id": "18fc2dbe-7882-46df-ad2d-c308be4349c7",
+              "name": "phoneNumber",
+              "type": "VARCHAR(n)",
+              "position": 0,
+              "size": "11",
+              "isPrimaryKey": false
+            },
+            {
+              "id": "fk_8ba33bfc-99be-4bbd-87f1-fed2c962a5d0",
+              "name": "fk_User",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "823c1175-a4df-44af-bdd8-b7a6e4951413",
+                "sourceTableId": "1b8a9919-af3f-467c-b129-c090f6b66e8e",
+                "columns": [
+                  {
+                    "id": "fk_fc764760-332b-49ce-ac16-8634e47a0bc0",
+                    "name": "user_id",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 100
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "1b8a9919-af3f-467c-b129-c090f6b66e8e",
+        "type": "Table",
+        "position": {
+          "x": 1079.4174664915865,
+          "y": -285.74547587783286
+        },
+        "data": {
+          "label": "User",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "fc764760-332b-49ce-ac16-8634e47a0bc0",
+              "name": "user_id",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false,
+              "isUnique": false
+            },
+            {
+              "id": "7346f049-db83-4de8-9d4a-8e9f442f6ebc",
+              "name": "firstName",
+              "type": "VARCHAR(n)",
+              "position": 1,
+              "size": "20",
+              "isPrimaryKey": false,
+              "isUnique": false
+            },
+            {
+              "id": "acb58c42-eee1-45ab-be71-3ff657c7f859",
+              "name": "lastName",
+              "type": "VARCHAR(n)",
+              "position": 2,
+              "size": "20",
+              "isPrimaryKey": false,
+              "isUnique": false
+            },
+            {
+              "id": "c599bf16-80f4-4866-a2c9-dff0b3a74c8a",
+              "name": "role",
+              "type": "Custom",
+              "position": 3,
+              "size": "255",
+              "isPrimaryKey": false,
+              "isUnique": false
+            },
+            {
+              "id": "d74b18fc-c145-46fa-bd13-169cc3213ee7",
+              "name": "email",
+              "type": "VARCHAR(n)",
+              "position": 4,
+              "size": "150",
+              "isPrimaryKey": false,
+              "isUnique": true
+            },
+            {
+              "id": "91ca745e-79c5-41d7-ba21-c54024561f0f",
+              "name": "password",
+              "type": "VARCHAR(n)",
+              "position": 5,
+              "isPrimaryKey": false,
+              "isUnique": false
+            }
+          ],
+          "isSelected": false
+        },
+        "measured": {
+          "width": 240,
+          "height": 173
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "8ee594fb-ccc6-42b4-b8b0-e80aaa6f7bd2",
+        "type": "Table",
+        "position": {
+          "x": 1381.4881808268844,
+          "y": -58.875497856096594
+        },
+        "data": {
+          "label": "product",
+          "isConnectable": false,
+          "columns": [
+            {
+              "id": "354922c2-7168-48d6-a119-fcd0f1543e25",
+              "name": "product_id",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": true,
+              "isOptional": false,
+              "isUnique": false
+            },
+            {
+              "id": "b787651c-13fa-4418-b532-7e4f307aedc7",
+              "name": "name",
+              "type": "VARCHAR(n)",
+              "position": 0,
+              "size": "100",
+              "isPrimaryKey": false,
+              "isOptional": false,
+              "isUnique": true
+            },
+            {
+              "id": "5914185a-c3f6-4904-91e9-98bcfef9fe67",
+              "name": "stock",
+              "type": "INT",
+              "position": 0,
+              "isPrimaryKey": false,
+              "isOptional": false,
+              "isUnique": false
+            },
+            {
+              "id": "c5e6e1c8-ccf9-4f17-b72b-99ad575e2541",
+              "name": "isDeleted",
+              "type": "Custom",
+              "position": 0,
+              "size": "bollean",
+              "isPrimaryKey": false,
+              "isOptional": false,
+              "isUnique": false
+            },
+            {
+              "id": "fb90dabf-0272-4d0a-9d5e-6bd756c9f56e",
+              "name": "price",
+              "type": "FLOAT",
+              "position": 0,
+              "isPrimaryKey": false,
+              "isOptional": false,
+              "isUnique": false
+            },
+            {
+              "id": "fk_a0b688c2-3d67-4a40-af9b-a9397234cbbe",
+              "name": "fk_User",
+              "type": "None",
+              "isForeignKey": true,
+              "foreignKeyProps": {
+                "foreignKeyGroupId": "e1998639-09ce-473f-9bc5-2e2ae6c2455d",
+                "sourceTableId": "1b8a9919-af3f-467c-b129-c090f6b66e8e",
+                "columns": [
+                  {
+                    "id": "fk_fc764760-332b-49ce-ac16-8634e47a0bc0",
+                    "name": "user_id",
+                    "type": "INT"
+                  }
+                ]
+              }
+            }
+          ],
+          "isSelected": true
+        },
+        "measured": {
+          "width": 240,
+          "height": 174
+        },
+        "selected": true,
+        "dragging": false
+      }
+    ],
+    "edges": [
+      {
+        "id": "1b8a9919-af3f-467c-b129-c090f6b66e8e->787de134-085e-4a18-8df1-c914b2135dba_823c1175-a4df-44af-bdd8-b7a6e4951413",
+        "type": "Relational",
+        "source": "1b8a9919-af3f-467c-b129-c090f6b66e8e",
+        "targetHandle": "foreign-key-handle-823c1175-a4df-44af-bdd8-b7a6e4951413",
+        "target": "787de134-085e-4a18-8df1-c914b2135dba",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "823c1175-a4df-44af-bdd8-b7a6e4951413",
+            "sourceTableId": "1b8a9919-af3f-467c-b129-c090f6b66e8e",
+            "columns": [
+              {
+                "id": "fk_fc764760-332b-49ce-ac16-8634e47a0bc0",
+                "name": "user_id",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "1b8a9919-af3f-467c-b129-c090f6b66e8e->8ee594fb-ccc6-42b4-b8b0-e80aaa6f7bd2_e1998639-09ce-473f-9bc5-2e2ae6c2455d",
+        "type": "Relational",
+        "source": "1b8a9919-af3f-467c-b129-c090f6b66e8e",
+        "targetHandle": "foreign-key-handle-e1998639-09ce-473f-9bc5-2e2ae6c2455d",
+        "target": "8ee594fb-ccc6-42b4-b8b0-e80aaa6f7bd2",
+        "markerStart": {
+          "type": "arrow"
+        },
+        "data": {
+          "foreignKeyProps": {
+            "foreignKeyGroupId": "e1998639-09ce-473f-9bc5-2e2ae6c2455d",
+            "sourceTableId": "1b8a9919-af3f-467c-b129-c090f6b66e8e",
+            "columns": [
+              {
+                "id": "fk_fc764760-332b-49ce-ac16-8634e47a0bc0",
+                "name": "user_id",
+                "type": "INT"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "viewport": {
+      "x": -330.89164412743105,
+      "y": 361.63668983732214,
+      "zoom": 0.6863705755102043
+    }
+  },
+  "name": "Assiment 4 part 1",
+  "folder": {
+    "name": "erd Back end Route Assigment 4",
+    "folderType": 2,
+    "parentFolder": {
+      "depth": 0,
+      "id": 392358,
+      "name": "Diagrams",
+      "folderType": 1
+    },
+    "depth": 1,
+    "id": 392361
+  },
+  "id": 548425,
+  "updatedAtTimestamp": 1787672235
+}

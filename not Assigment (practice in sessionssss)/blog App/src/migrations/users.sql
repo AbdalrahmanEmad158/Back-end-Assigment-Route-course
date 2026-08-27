@@ -1,0 +1,14 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+  
+  email VARCHAR(255) UNIQUE NOT NULL CHECK(POSITION('@' in email) >0),
+
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE users
+    ADD COLUMN
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW();

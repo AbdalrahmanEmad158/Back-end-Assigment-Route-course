@@ -1,0 +1,10 @@
+const{Router}=require("express")
+const blogRoter= Router()
+const blogController = require("./blog.controller")
+const { authGuard } = require("../../common/auth/guard")
+blogRoter.post('/create',authGuard,blogController.createBlog)
+blogRoter.delete('/:id',authGuard,blogController.softDeleteBlog)
+blogRoter.patch('/:id',authGuard,blogController.restoreBlog)
+blogRoter.put('/:id',authGuard,blogController.updateBlog)
+blogRoter.get('/',blogController.getAllBlogs)
+module.exports =blogRoter
