@@ -9,3 +9,17 @@
                 FOREIGN KEY (SupplierID)
                 REFERENCES Suppliers(Supplier_id)
         );
+
+        /*
+        part 3 number 5
+        */ 
+
+          ALTER TABLE Products
+            ADD COLUMN IF NOT EXISTS Category TEXT default 'null'
+
+             ALTER TABLE Products
+            DROP COLUMN IF EXISTS Category
+
+
+               ALTER TABLE Products
+            ALTER COLUMN productname SET NOT NULL

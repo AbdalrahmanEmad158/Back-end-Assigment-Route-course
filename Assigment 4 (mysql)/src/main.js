@@ -3,11 +3,13 @@ config()
 
 const express = require("express");
 
+
 const productsRoter = require('./app/Products/Products.route.js')
 const salesRoter = require('./app/Sales/Sales.route.js')
 const suppliersRoter = require('./app/Suppliers/Suppliers.route.js')
 
 const pool  = require("./common/db/db.js");
+const reportingRoter = require('./app/reporting/reporting.js');
 
 const app = express();
 
@@ -30,6 +32,8 @@ app.use(express.json())
 app.use('/products',productsRoter)
 app.use('/suppliers',suppliersRoter)
 app.use('/sales',salesRoter)
+app.use('/reporting',reportingRoter)
+
 
 
 
