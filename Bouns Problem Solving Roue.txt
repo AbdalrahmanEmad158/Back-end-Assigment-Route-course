@@ -106,3 +106,35 @@ LEFT JOIN Transactions t
     ON v.visit_id = t.visit_id
 WHERE t.transaction_id IS NULL
 GROUP BY v.customer_id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+assignment 5 : 
+
+
+
+
+var removeElement = function(nums, val) {
+
+
+while(nums.includes(val)){
+    let index = nums.indexOf(val)
+    nums.splice(index, 1)
+    }
+
+};
