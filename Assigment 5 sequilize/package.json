@@ -1,0 +1,15 @@
+{
+   "main": "src/main.js",
+   "scripts": {
+      "dev": "node --watch .",
+      "start": "node ."
+   },
+     "type": "module",
+   "dependencies": {
+      "@prisma/client": "^6.19.1",
+      "dotenv": "^17.4.2",
+      "express": "^5.2.1",
+      "prisma": "^6.19.1"
+      
+   }
+}
