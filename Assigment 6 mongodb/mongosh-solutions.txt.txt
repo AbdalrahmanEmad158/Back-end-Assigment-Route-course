@@ -1,0 +1,273 @@
+use Assigment6MongodbShell
+
+1:
+db.createCollection("books", { validator :{$jsonSchema : {bsonType : "object", required:["title"],properties : {title : {bsonType :"string",minLength:1}}}}})
+____________________________________________________________________________________________________________________________________________________________
+2:
+Assigment6MongodbShell> db.authors.insertOne({name : "Author1",nationality:"British"})
+____________________________________________________________________________________________________________________________________________________________
+
+3:
+Assigment6MongodbShell> db.createCollection("logs",{capped:true,size : 1024 * 1024})
+____________________________________________________________________________________________________________________________________________________________
+4:
+Assigment6MongodbShell> db.books.createIndex({title:1})
+____________________________________________________________________________________________________________________________________________________________
+5:
+Assigment6MongodbShell> db.books.insertOne({
+   "title": "Book1",
+   "author": "Ali",
+   "year": 1937,
+   "genres": ["Fantasy", "Adventure"]
+ })
+____________________________________________________________________________________________________________________________________________________________
+6:
+
+Assigment6MongodbShell> db.books.insertMany([
+   {
+     "title": "Future",
+     "author": "George Orwell",
+     "year": 2020,
+     "genres": ["Science Fiction"]
+   },
+   {
+     "title": "To Kill a Mockingbird",
+     "author": "Harper Lee",
+     "year": 1960,
+     "genres": ["Classic", "Fiction"]
+   },
+   {
+     "title": "Brave New World",
+     "author": "Aldous Huxley",
+     "year": 2006,
+    "genres": ["Dystopian", "Science Fiction"]
+   }
+ ])
+____________________________________________________________________________________________________________________________________________________________
+7:
+
+Assigment6MongodbShell> db.logs.insertOne({
+   "book_id": "64b5c2d8a123456ef8914",
+   "action": "borrowed"
+ })
+____________________________________________________________________________________________________________________________________________________________
+
+8 :
+
+Assigment6MongodbShell> db.books.updateOne({title : "Future"},{$set : {year : 2022}})
+____________________________________________________________________________________________________________________________________________________________
+
+9 : 
+
+Assigment6MongodbShell> db.books.findOne({title : "Brave New World"})
+____________________________________________________________________________________________________________________________________________________________
+
+10 : 
+
+Assigment6MongodbShell> db.books.find({year:{$gte : 1990, $lte : 2010}})
+____________________________________________________________________________________________________________________________________________________________
+
+11 :
+
+Assigment6MongodbShell> db.books.find({genres :{$elemMatch :{$eq:"Science Fiction"}}})
+____________________________________________________________________________________________________________________________________________________________
+
+12 : 
+
+Assigment6MongodbShell> db.books.find().skip(2).limit(3).sort({year:-1})
+
+Assigment6MongodbShell> db.books.find().sort({year:-1}).skip(2).limit(3)      كانت نفس النتائج
+____________________________________________________________________________________________________________________________________________________________
+
+13 :
+
+Assigment6MongodbShell> db.books.find({year :{$type : "int"}})
+____________________________________________________________________________________________________________________________________________________________
+
+14 : 
+
+حل 1 :
+Assigment6MongodbShell> db.books.find({
+   $and: [
+     {
+       genres: {
+         $ne: "Horror"
+       }
+     },
+     {
+       genres: {
+         $ne: "Science Fiction"
+       }
+     }
+   ]
+ })
+
+
+
+
+
+
+حل 2 : 
+
+
+
+Assigment6MongodbShell> db.books.find({
+   $nor: [
+     {
+       genres: {
+         $eq: "Horror"
+       }
+     },
+     {
+       genres: {
+         $eq: "Science Fiction"
+       }
+     }
+   ]
+ })
+
+
+
+
+
+
+
+
+
+
+
+حل 3 :  with Array operator
+
+
+
+db.books.find({
+  genres: {
+    $not: {
+      $elemMatch: {
+        $in: ["Horror", "Science Fiction"]
+      }
+    }
+  }
+})
+
+
+
+
+حل اربعه :   db.books.find({
+  genres: {
+    $nin: ["Horror", "Science Fiction"]
+  }
+})
+____________________________________________________________________________________________________________________________________________________________
+
+15 : 
+
+Assigment6MongodbShell> db.books.deleteMany({year :{$lt :2000}})
+____________________________________________________________________________________________________________________________________________________________
+
+16 :
+
+Assigment6MongodbShell> db.books.aggregate([{$match :{year :{$gt:2000}}},{$sort : {year : -1}}])
+____________________________________________________________________________________________________________________________________________________________
+
+17 :
+
+Assigment6MongodbShell> db.books.aggregate([{ $match: { year: { $gt: 2000 } } },{$project :{ _id: 0,title: 1,author: 1,year: 1}}])
+____________________________________________________________________________________________________________________________________________________________
+18 :
+
+Assigment6MongodbShell>  db.books.aggregate([{$unwind :"$genres"}])
+
+____________________________________________________________________________________________________________________________________________________________
+
+19 :
+
+Assigment6MongodbShell> db.books.aggregate([{ $lookup: {from: "logs", localField: "_id",foreignField: "book_id", as: "logs"}}])
+
+دا دائما كان يطلع ال 
+logs[]
+فاضيه
+ لانه كان بيقارن بالقيمه و النوع
+ وانا كان عندي ال
+ _id is objectId type  
+ , book_id is string
+
+
+
+
+
+
+
+
+db.books.aggregate([
+  {
+    $addFields: {
+      bookIdString: { $toString: "$_id" }                                     string عشان يقارن بنفس النوع  اثناء المقارنه وخليت القيمه    field  هنا عملت         
+    }
+  },
+  {
+    $lookup: {
+      from: "logs",
+      localField: "bookIdString",
+      foreignField: "book_id",
+      as: "logs"
+    }
+  }
+])
+
+
+
+
+
+
+
+
+
+
+
+وعشان يبقا ال response 
+زي في صوره الاسايمنت معرفتش اعملها ودي الحاجه الوحيده ال عملتها ب
+Ai 
+
+
+
+
+
+db.books.aggregate([
+  {
+    $addFields: {
+      bookIdString: { $toString: "$_id" }
+    }
+  },
+  {
+    $lookup: {
+      from: "logs",
+      localField: "bookIdString",
+      foreignField: "book_id",
+      as: "logs"
+    }
+  },
+  {
+    $unwind: "$logs"
+  },
+  {
+    $group: {
+      _id: "$logs.action",
+      book_details: {
+        $push: {
+          title: "$title",
+          author: "$author",
+          year: "$year"
+        }
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      action: "$_id",
+      book_details: 1
+    }
+  }
+])
+____________________________________________________________________________________________________________________________________________________________
