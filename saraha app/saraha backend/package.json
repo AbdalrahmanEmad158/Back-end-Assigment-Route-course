@@ -1,0 +1,35 @@
+{
+  "name": "saraha-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=dev node --watch .",
+    "start:dev": "cross-env NODE_ENV=dev node .",
+    "start:prod": "cross-env NODE_ENV=prod node ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "argon2": "^0.45.1",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "google-auth-library": "^11.1.0",
+    "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.10.1",
+    "node-mailjet": "^6.0.11",
+    "nodemailer": "^10.0.10",
+    "zod": "^4.6.5"
+  }
+}
