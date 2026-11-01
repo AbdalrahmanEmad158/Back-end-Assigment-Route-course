@@ -14,12 +14,10 @@ export async function createUser(userData)
 
  const temp = user.toObject()
 const userobj2 = {
-   
+    _id: temp._id,
     fullName : temp.fullName,
     email: temp.email,
     gender: temp.gender,
-   
-   
   };
   if (temp.phone) {
     userobj2.phone = decrypt(temp.phone)

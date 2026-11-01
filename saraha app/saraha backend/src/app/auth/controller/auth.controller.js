@@ -2,6 +2,7 @@ import { toMs } from "../../../pkg/utils/time.js"
 import * as authServices from "../service/auth.service.js"
 import * as authdto from "../dto/auth.dto.js"
 import validateBody from "../../../lib/validation/validation.js"
+import { setCookies } from "../utils/token.js"
 
 
 export async function signUp(req,res,next){
@@ -35,6 +36,22 @@ export async function verifyAccounr(req,res,next){
    }
 }
 
+export async function enableToStepVefication(req,res,next){
+   try {
+     
+       const data = validateBody(authdto.enableTwoStepVerfication,req.body)
+        const {email,code} = data
+     const enableTwoStepVerfication = await authServices.enableTwoStepVerication(email,code)
+     return res.status(200).json({
+        success : true ,
+        message : "user enable Two Step Verfication successful",
+        user : enableTwoStepVerfication
+     })
+   } catch (error) {
+    next(error)
+   }
+}
+
 export async function sendOtpVerify(req, res, next) {
   try {
    const data = validateBody(authdto.sendOtpDto,req.body)
@@ -50,17 +67,18 @@ export async function logIn(req,res,next){
    try {
       const data = validateBody(authdto.loginDto,req.body)
         const {email,password} = data
-     const token = await authServices.logIn(email ,password)
-     res.cookie("access_token" , token,
-      {
-         httpOnly : true , //set or modify by backend http req only not by js Script code
-         maxAge : toMs(24,"h")
-      }
-     )
+     const  tokens = await authServices.logIn(email ,password)
+     if (!tokens) {
+      return res.json({ message: "check your inbox, we sent OTP", success: true });
+     }
+     console.log(tokens)
+    setCookies(res,tokens.accessToken,tokens.refreshToken)
+
      return res.status(200).json({
         success : true ,
         message : "user login successful",
-        token : token
+        accessToken : tokens.accessToken,
+        refreshToken : tokens.refreshToken,
      })
    }
     catch (error) {
@@ -68,7 +86,22 @@ export async function logIn(req,res,next){
    }
 }
 
+export async function verifyCodeToLogin(req, res, next) {
+  try {
+    const data = validateBody(authdto.verifyCodeToLogin,req.body)
+    const { email, code } = data
+    const { accessToken, refreshToken } = await authServices.verifyCode2StepVerification(email, code);
 
+    setCookies(res,accessToken,refreshToken)
+
+    res.json({ message: "login successfully", success: true ,
+     accessToken : accessToken,refreshToken : refreshToken
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+ 
 export async function sendOtp(req, res, next) {
   try {
    const data = validateBody(authdto.sendOtpDto,req.body)
@@ -99,15 +132,52 @@ export async function loginWithGoogle(req,res,next)
     try {
       const data = validateBody(authdto.loginWithGoogleDto,req.body)
       const {idToken} = data;
-      const token = await authServices.loginWithGoogle(idToken);
-      res.cookie("access_token" , token,
-      {
-         httpOnly : true , //set or modify by backend http req only not by js Script code
-         maxAge : toMs(24,"h")
-      }
-     )
-      res.status(200).json({message: "you are login with google successful", success: true,token : token});
+      const {accessToken,refreshToken} = await authServices.loginWithGoogle(idToken);
+   
+      setCookies(res,accessToken,refreshToken)
+
+
+      res.status(200).json({message: "you are login with google successful", success: true,accessToken : accessToken, refreshToken : refreshToken});
     } catch (err) {
       next(err);
     }
    }
+
+
+   export async function refreshToken(req,res,next){
+    try {
+      const refreshtoken = req.cookies?.refresh_token || req.headers?.reftoken
+     
+      const {accessToken,refreshToken} = await authServices.refreshToken(refreshtoken)
+
+      setCookies(res,accessToken,refreshToken)
+
+      return res.status(200).json({
+        success : true ,
+        message : "user refresh token successful",
+        accessToken : accessToken,
+        refreshToken : refreshToken,
+       
+     })
+      
+    } catch (error) {
+      next(error)
+    }
+   }
+
+    export async function logout(req,res,next){
+      try {
+    
+        const logout= await authServices.logout(req.accessTokenDecodedData,req.refreshTokenDecodedData)
+        res.clearCookie("access_token")
+ 
+        res.clearCookie("refresh_token")
+        res.status(200).json({
+            success : true ,
+        message : "user logout success",
+        data : logout
+        })
+      } catch (error) {
+        next(error)
+      }
+    }

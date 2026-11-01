@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=dev node --watch .",
     "start:dev": "cross-env NODE_ENV=dev node .",
-    "start:prod": "cross-env NODE_ENV=prod node ."
+    "start:prod": "cross-env NODE_ENV=prod node .",
+    "testnginx": "cross-env NODE_ENV=testnginx node ."
   },
   "keywords": [],
   "author": "",
@@ -18,18 +19,25 @@
   "type": "module",
   "dependencies": {
     "argon2": "^0.45.1",
+    "axios": "^1.21.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "cross-env": "^10.1.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.1",
+    "file-type": "^22.1.1",
     "google-auth-library": "^11.1.0",
+    "helmet": "^8.3.0",
     "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.10.1",
+    "multer": "^2.4.0",
     "node-mailjet": "^6.0.11",
     "nodemailer": "^10.0.10",
+    "rate-limit-redis": "^6.0.2",
+    "redis": "^6.3.0",
     "zod": "^4.6.5"
   }
 }

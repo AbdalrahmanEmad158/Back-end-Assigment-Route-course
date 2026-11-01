@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt"           //hashing password
-export async function comparePassword(password, hashedPassword) {
+export async function compare(password, hashedPassword) {
   return bcrypt.compare(password, hashedPassword);
 }
 

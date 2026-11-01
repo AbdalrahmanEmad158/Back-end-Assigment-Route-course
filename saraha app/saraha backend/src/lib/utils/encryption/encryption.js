@@ -7,7 +7,7 @@ import crypto from 'node:crypto';
 export const encrypt = (plainText) => {
   const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY||envConfig.ENCRYPTION_KEY,"hex");
 const IV_LENGTH = Number(process.env.IV_LENGTH)||envConfig.IV_LENGTH;
-م
+
 
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipherObject = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);

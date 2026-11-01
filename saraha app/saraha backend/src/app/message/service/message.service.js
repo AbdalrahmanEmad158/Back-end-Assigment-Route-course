@@ -17,11 +17,13 @@ export async function sendMessage(content,reciverId,senderId) {
 
 
 export async function getAllMyMsg(userId) {
+  /*
     const userReciverExist = await userRepository.getUserById(userId)
     if(!userReciverExist)
     {
        throw userNotExist
     }
+        */
     const msgs =await msgRepository.getAllMsgByUserId(userId)
     if (msgs.length ===0) {
        throw msgErrors.noMessages

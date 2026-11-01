@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { genderEnums } from "../../../lib/enums/gender.enum.js";
+import { roleEnums } from "../../../lib/enums/role.enums.js";
 
 const UserSchema = new Schema({
     firstName : {
@@ -70,6 +71,10 @@ const UserSchema = new Schema({
         default : genderEnums.MALE
          */
     },
+    role : {type : String ,
+        enum :Object.values(roleEnums),
+          default : roleEnums.USER
+    },
   /*
 
     age :{
@@ -83,6 +88,12 @@ const UserSchema = new Schema({
         type: Boolean,
         default: false  
     },
+    twoStepVerfication :{ 
+        type: Boolean,
+        default: false  },
+    profilePicPath: String,
+coverImagePaths: [String],
+cvPath: String,
 
 },
 

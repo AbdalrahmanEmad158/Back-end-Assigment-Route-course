@@ -6,7 +6,7 @@ import envConfig from "../config/env.config.js";
 import { userModel } from "../../app/user/model/user.model.js";
 export const connectDB = async (/*app,port */) => {
   try {
-await mongoose.connect(process.env.DB_URI||envConfig.MONGOOSE_URI);
+await mongoose.connect(process.env.ATLAS_DB_URL||envConfig.ATLAS_DB_URL||envConfig.MONGOOSE_URI);
     logger.info("DB connected");
     await userModel.syncIndexes()
   /*

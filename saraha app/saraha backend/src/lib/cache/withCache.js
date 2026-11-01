@@ -1,4 +1,5 @@
 import { cacheProvider } from "./init.js"
+import { calcTtl, redisGet, redisSet } from "../cacheRedis/redis.srvices.js";
 
 export function withCache(ttl=3600) {
     return  async (req,res,next) => {
@@ -8,9 +9,10 @@ export function withCache(ttl=3600) {
 
 
         let key = `${req.method}:${req.originalUrl}`
-         console.log("CACHE KEY:", key);
-      const cachedData = await cacheProvider.get(key)
-         console.log("CACHED DATA:", cachedData);
+  
+     // const cachedData = await cacheProvider.get(key)
+      const cachedData = await redisGet(key)
+     
       if(cachedData){
         res.setHeader('X-Cache', 'HIT')
         return res.status(200).json(JSON.parse(cachedData))
@@ -18,7 +20,8 @@ export function withCache(ttl=3600) {
       const originalJson = res.json.bind(res)
       res.json = async (body) =>{
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        await cacheProvider.set(key, JSON.stringify(body), ttl)
+       // await cacheProvider.set(key, JSON.stringify(body), ttl)
+          await redisSet({key, value : JSON.stringify(body),options: {EX:ttl}})
         res.setHeader('X-Cache', 'MISS')
       }
      return originalJson(body)

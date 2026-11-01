@@ -7,6 +7,8 @@ import { logger } from "./pkg/logger/logger.js";
 import { connectDB } from "./lib/db/mongoose.js";
 
 import envConfig from "./lib/config/env.config.js";
+import { redisConnection } from "./lib/cacheRedis/redisClient.js";
+import { nodeMailerConnection } from "./lib/email/nodemailer.js";
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ async function startServer()
       logger.info(`Server is running on port ${process.env.PORT||envConfig.PORT}`);
     }
 )
+    await redisConnection() 
+    await nodeMailerConnection()
   }
   catch (error) {
     logger.error(error);

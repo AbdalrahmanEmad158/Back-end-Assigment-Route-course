@@ -1,7 +1,6 @@
 import dotenv from "dotenv"
 
 dotenv.config({path:[`.${process.env.NODE_ENV}.env`,'.env']})
-console.log("process.env.MAIL_JET_API_KEY",process.env.MAIL_JET_API_KEY)
 
  const envConfig = {
  PORT : process.env.PORT || 5000,
@@ -20,6 +19,19 @@ MAIL_JET_API_KEY : process.env.MAIL_JET_API_KEY || "",
 MAIL_JET_SECRET_KEY : process.env.MAIL_JET_SECRET_KEY || "",
 MAIL_JET_FROM_EMAIL : process.env.MAIL_JET_FROM_EMAIL || "",
 MAIL_JET_FROM_NAME : process.env.MAIL_JET_FROM_NAME || "",
+
+JWT_ADMIN_SECRET : process.env.JWT_ADMIN_SECRET || '',
+USER_ACESS_TOKEN_EXPIRES_IN : process.env.USER_ACESS_TOKEN_EXPIRES_IN || "",
+ADMIN_ACESS_TOKEN_EXPIRES_IN : process.env.ADMIN_ACESS_TOKEN_EXPIRES_IN || "",
+
+
+JWT_USER_SECRET_REFRESH:process.env.JWT_USER_SECRET_REFRESH || "",
+USER_REFRESH_TOKEN_EXPIRES_IN:process.env.USER_REFRESH_TOKEN_EXPIRES_IN || "",
+JWT_ADMIN_SECRET_REFRESH:process.env.JWT_ADMIN_SECRET_REFRESH || "",
+ADMIN_REFRESH_TOKEN_EXPIRES_IN:process.env.ADMIN_REFRESH_TOKEN_EXPIRES_IN || "",
+
+REDIS_CLOUDE_UPSTACH_URL :process.env.REDIS_CLOUDE_UPSTACH_URL,
+ATLAS_DB_URL:process.env.ATLAS_DB_URL
 }
 
 export default envConfig

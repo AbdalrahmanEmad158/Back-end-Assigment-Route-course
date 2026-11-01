@@ -1,7 +1,7 @@
 import envConfiq from "../../../lib/config/env.config.js"
 import bcrypt from "bcrypt";
 
-export async function hashPassword(password) {
+export async function hash(password) {
   return bcrypt.hash(password, Number(process.env.SALT_ROUND)||envConfiq.SALT_ROUND);
 }
 
