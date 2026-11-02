@@ -7,3 +7,7 @@ export async function createMessage(content , reciver ,sender ){
 export async function getAllMsgByUserId(userId){
     return messageModel.find({reciver : userId},{},{populate:{path :"reciver" ,select:"email"}})
 }
+
+export async function getMessageById(id) {
+  return await messageModel.findById(id);
+}

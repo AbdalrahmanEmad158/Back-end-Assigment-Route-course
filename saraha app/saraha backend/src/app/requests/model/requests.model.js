@@ -1,14 +1,16 @@
 import { model, Schema } from 'mongoose';
+import { RequestStatusEnum } from '../../../lib/enums/requestStatus.enum.js';
 
 const schema = new Schema({
   messageId: { type: Schema.Types.ObjectId, ref: "Message" },
-  senderOfReq: { type: Schema.Types.ObjectId, ref: "User" },
-  receiverOfReq: { type: Schema.Types.ObjectId, ref: "User" },
-  status: {
-    type: String,
-    enum: ["pending", "accept", "decline"],
-    default: "pending"
-  }
+  sender: { type: Schema.Types.ObjectId, ref: "User" },
+  requester: { type: Schema.Types.ObjectId, ref: "User" },
+ 
+    status: {
+      type: String,
+      enum: Object.values(RequestStatusEnum),
+      default: RequestStatusEnum.PENDING,
+    },
 }, {
   timestamps: true
 });
