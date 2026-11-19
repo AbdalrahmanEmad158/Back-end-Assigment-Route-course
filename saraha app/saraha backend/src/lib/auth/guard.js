@@ -14,8 +14,8 @@ try {
     const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
    
     
-     const token = req.cookies?.access_token || bearerToken   || req.headers?.token
-   
+     const token =req.cookies?.access_token||bearerToken  ||  req.headers?.token
+   console.log(token,"tokenene")
 
  if (!token) {
 throw noTokenProvided
@@ -38,6 +38,10 @@ console.log(user)
  if (!user) {
  throw  userNotExist
  }
+ if (payload.iat<user.changeCredentialTime/1000) {
+   throw new AppError("you make reset password please login again", 401);
+ }
+ 
  req.user = user
  req.accessTokenDecodedData=data
 

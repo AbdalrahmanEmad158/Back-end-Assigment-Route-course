@@ -6,13 +6,13 @@ import bcrypt from "bcrypt"           //hashing password
 import crypto from "node:crypto"     //create Otp
 import * as timeUtility from "../../../pkg/utils/time.js"
 import * as userErrors from "../../user/errors.js"
-import { invailedCreadintials, invalidCode, otpExpired ,noTokenProvided} from "../errors.js";
+import { invailedCreadintials, invalidCode, otpExpired ,noTokenProvided, invalidToken} from "../errors.js";
 
 import {hash } from "../utils/hash.js";
 import { compare } from "../utils/comparePassword.js";
 import { encrypt } from "../../../lib/utils/encryption/encryption.js";
 
-import { decodeToken, generateToken, verifyToken } from "../utils/token.js";
+import { decodeToken, generateAuthTokens, generateToken, verifyToken } from "../utils/token.js";
 import envConfig from "../../../lib/config/env.config.js";
 import { tokenTypesEnums } from "../../../lib/enums/tokenTypes.Enums.js";
 import { OAuth2Client } from "google-auth-library";
@@ -185,46 +185,6 @@ if (!user.isVerified)
 }
 
 
-export function getJwtSecrets(role) {
-  if (role === "admin") {
-    return {
-      accessSecret: envConfig.JWT_ADMIN_SECRET,
-      refreshSecret: envConfig.JWT_ADMIN_SECRET_REFRESH,
-    };
-  }
-  return {
-    accessSecret: envConfig.JWT_SECRET,
-    refreshSecret: envConfig.JWT_USER_SECRET_REFRESH,
-  };
-}
-
-export function generateAuthTokens(user) {
-  const payload = {
-    id: (user.id || user._id).toString(),
-    email: user.email,
-    name: user.name || user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User",
-    role: user.role,
-  };
-
-  const { accessSecret, refreshSecret } = getJwtSecrets(payload.role);
-
-  const accessToken = generateToken(
-    payload,
-    accessSecret,
-    timeUtility.toSecounds(1, "h"),
-    crypto.randomUUID()
-  );
-
-  const refreshToken = generateToken(
-    payload,
-    refreshSecret,
-    timeUtility.toSecounds(7, "d"),
-    crypto.randomUUID()
-  );
-
-  return { accessToken, refreshToken };
-}
-
 export async function logIn(email, password) {
   const attemptsKey = `login-triles:${email}`;
 
@@ -293,7 +253,7 @@ export async function verifyCode2StepVerification(email, code) {
   );
 }
 
-export async function resetPassword(email, code, newPassword) {
+export async function resetPassword(email, code, newPassword,user) {
   if (!newPassword || typeof newPassword !== "string" || !newPassword.trim()) {
     throw new AppError("New password is required", 400);
   }
@@ -317,16 +277,51 @@ export async function resetPassword(email, code, newPassword) {
       const hashedPassword = await hash(newPassword);
       const userUpdated = await userRepo.updateUserByEmail(email, { password: hashedPassword });
 
-      await redisSet({
-        key: `revoke_all_sessions_${user._id}`,
-        value: "password_changed",
-        options: { EX: 7 * 24 * 3600 }
-      });
+user.changeCredentialTime= new Date()
+await user.save()
 
       return userUpdated;
     }
   );
 }
+
+
+export async function changePassword(currentPassword ,newPassword,reNewPassword,user) {
+  if (!newPassword || typeof newPassword !== "string" || !newPassword.trim()) {
+    throw new AppError("New password is required", 400);
+  }
+   if (!currentPassword || typeof currentPassword !== "string" || !currentPassword.trim()) {
+    throw new AppError("current Password is required", 400);
+  }
+
+  if (!reNewPassword|| typeof reNewPassword !== "string" || !reNewPassword.trim()) {
+    throw new AppError("reNewPasswordis required", 400);
+  }
+
+   const isSame = await compare(currentPassword, user.password);
+        if (!isSame) {
+          throw new AppError("this is wrong password", 400);
+        }
+
+
+         if (newPassword!=reNewPassword) {
+          throw new AppError("the newPassword is not equal reNewPassword", 400);
+        }
+
+        const hashedPassword = await hash(newPassword);
+      const userUpdated = await userRepo.updateUserByEmail(user.email, { password: hashedPassword });
+
+user.changeCredentialTime= new Date()
+await user.save()
+
+      return userUpdated;
+}
+      
+
+      
+
+
+
 
 async function verifyGoogleIdToken(idToken) {
     try {
@@ -374,14 +369,30 @@ export async function refreshToken(refreshtoken) {
 
   const { data, JwtSecretKeyUse } = await decodeToken(refreshtoken, tokenTypesEnums.REFRESH_TOKEN);
 
+/*
+const tokenExpiryDate = data.iat + 60*60
+const currentDate = Date.now() / 1000; // الوقت الحالي بالثواني
+
+if (tokenExpiryDate > currentDate) {
+  throw new AppError("Old Token Still Valid",402);
+} */
+
+
+
+
+
   const user = await userRepo.getUserById(data.id);
   if (!user || user.isDeleted || !user.isVerified) {
     throw userErrors.userNotExist;
   }
 
-  verifyToken(refreshtoken, JwtSecretKeyUse);
+ 
 
   const remainingTtl = await calcTtl(data.exp);
+   if (remainingTtl <= 0) {
+    throw invalidToken
+  }
+
   if (remainingTtl > 0) {
     await redisSet({
       key: `bl_${tokenTypesEnums.REFRESH_TOKEN}_${data.jti}`,
@@ -406,4 +417,10 @@ if (refreshTtl>0) {
 }
 
 return true
+}
+
+export async function logoutFromAllDevice(accessTokenData,user){
+ 
+user.changeCredentialTime= new Date()
+await user.save()
 }

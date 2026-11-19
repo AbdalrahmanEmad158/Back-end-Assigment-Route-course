@@ -22,6 +22,9 @@ authRouter.post("/gmail/login",authController.loginWithGoogle)
 authRouter.post("/gmail/login",authController.loginWithGoogle)
 
 authRouter.post("/refresh-token",authController.refreshToken)
-authRouter.post("/logout",authGuardMiddleWare,
-    decodeRefreshMiddleWare,authController.logout)
+authRouter.post("/logout",authGuardMiddleWare,decodeRefreshMiddleWare,authController.logout)
+authRouter.post("/logout-from-all-device",authGuardMiddleWare,authController.logoutFromAllDevice)
+authRouter.post("/change-password",authGuardMiddleWare,authController.changePassword)
+
+
 export default authRouter

@@ -50,6 +50,16 @@ export const resetPasswprdDto =z.object({
      newPassword :z.string().min(8).max(20).regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/).trim()
 })
 
+export const changePasswprdDto =z.object({
+    currentPassword :z.string().min(8).max(20).regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/).trim(),
+    newPassword :z.string().min(8).max(20).regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/).trim(),
+    reNewPassword:z.string().min(8).max(20).regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/).trim()
+    }).refine((values)=> values.newPassword===values.reNewPassword,
+      {
+        message :'Passwords do not match',
+        path : ["reNewPassword"]
+      })
+
 export const loginWithGoogleDto = z.object({
     idToken: z.string().min(1).trim(),
   });

@@ -120,13 +120,22 @@ export async function resetPassword(req,res,next)
     try {
       const data = validateBody(authdto.resetPasswprdDto,req.body)
     const {email,code,newPassword} = data;
-    await authServices.resetPassword(email,code,newPassword);
+    await authServices.resetPassword(email,code,newPassword,req.user);
     res.status(200).json({message: "you are reset password successful", success: true});
   } catch (err) {
     next(err);
   }
 }
-
+export async function  changePassword(req,res,next){
+   try {
+      const data = validateBody(authdto.changePasswprdDto,req.body)
+    const {currentPassword ,newPassword,reNewPassword} = data;
+    await authServices.changePassword(currentPassword ,newPassword,reNewPassword,req.user);
+    res.status(200).json({message: "you are chanhe password successful", success: true});
+  } catch (err) {
+    next(err);
+  }
+}
 export async function loginWithGoogle(req,res,next)
 {
     try {
@@ -181,3 +190,25 @@ export async function loginWithGoogle(req,res,next)
         next(error)
       }
     }
+
+
+
+    export async function  logoutFromAllDevice(req,res,next){
+      try {
+    
+        const logout= await authServices.logoutFromAllDevice(req.accessTokenDecodedData,req.user)
+        res.clearCookie("access_token")
+ 
+        res.clearCookie("refresh_token")
+        res.status(200).json({
+            success : true ,
+        message : "user logout from all device success",
+        data : logout
+        })
+      } catch (error) {
+        next(error)
+      }
+    }
+
+
+   

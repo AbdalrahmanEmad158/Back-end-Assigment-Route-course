@@ -20,7 +20,7 @@ export function createApp()
    
 
 
-    app.use(limeter)
+   // app.use(limeter)
       app.use(helmet())
 app.use(cors())
     app.use('/uploads',express.static('uploads'));

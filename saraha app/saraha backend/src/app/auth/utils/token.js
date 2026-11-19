@@ -1,11 +1,12 @@
 import envConfig from "../../../lib/config/env.config.js";
 import  jwt from "jsonwebtoken";
-import { invalidToken ,noRoleProvided} from "../errors.js";
+import { invalidCode, invalidToken ,noRoleProvided} from "../errors.js";
 import { tokenTypesEnums } from "../../../lib/enums/tokenTypes.Enums.js";
 
 import { redisGet, redisSet } from "../../../lib/cacheRedis/redis.srvices.js";
 import { AppError } from "../../../pkg/error/error.js";
-import { toMs } from "../../../pkg/utils/time.js";
+import * as timeUtility from "../../../pkg/utils/time.js"
+
 
 
 
@@ -15,7 +16,9 @@ export function generateToken(payload, jwtSecKeyUse = envConfig.JWT_SECRET, expi
      const token = jwt.sign(
       payload,
       secret,
-      { expiresIn: expiresIn || "1h" ,jwtid :jwtid})
+      { expiresIn: expiresIn || "1h" ,jwtid :jwtid
+        ,subject : payload.id
+      })
       return token
 }  
 
@@ -35,6 +38,7 @@ export async function decodeToken(token,tokenType)
 {
    
        const data = jwt.decode(token)
+       console.log("datasa",data,"datasa")
     if (!data?.role) {
         throw noRoleProvided
     }
@@ -55,6 +59,10 @@ export async function decodeToken(token,tokenType)
         if(tokenType ==tokenTypesEnums.REFRESH_TOKEN)
       {JwtSecretKeyUse = envConfig.JWT_ADMIN_SECRET_REFRESH}
     }
+
+
+    const verifiedData = verifyToken(token, JwtSecretKeyUse);
+
      const blacklisted = await redisGet(`bl_${tokenType}_${data.jti}`);
 
 
@@ -78,12 +86,53 @@ export async function decodeToken(token,tokenType)
 }  
 
 
+ function getJwtSecrets(role) {
+  if (role === "admin") {
+    return {
+      accessSecret: envConfig.JWT_ADMIN_SECRET,
+      refreshSecret: envConfig.JWT_ADMIN_SECRET_REFRESH,
+    };
+  }
+  return {
+    accessSecret: envConfig.JWT_SECRET,
+    refreshSecret: envConfig.JWT_USER_SECRET_REFRESH,
+  };
+}
+
+export function generateAuthTokens(user) {
+  const payload = {
+    id: (user.id || user._id).toString(),
+    email: user.email,
+    name: user.name || user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim() || "User",
+    role: user.role,
+  };
+
+  const { accessSecret, refreshSecret } = getJwtSecrets(payload.role);
+
+  const accessToken = generateToken(
+    payload,
+    accessSecret,
+    timeUtility.toSecounds(1, "h"),
+    crypto.randomUUID()
+  );
+
+  const refreshToken = generateToken(
+    payload,
+    refreshSecret,
+    timeUtility.toSecounds(7, "d"),
+    crypto.randomUUID()
+  );
+
+  return { accessToken, refreshToken };
+}
+
+
 
 export function setCookies(res,accessToken,refreshToken){
    res.cookie("access_token" ,accessToken,
       {
          httpOnly : true , //set or modify by backend http req only not by js Script code
-         maxAge : toMs(1,"h")  // exoire in guardAuth directly 
+         maxAge : timeUtility.toMs(1,"h")  // exoire in guardAuth directly 
       }
      )
 
@@ -91,7 +140,7 @@ export function setCookies(res,accessToken,refreshToken){
        res.cookie("refresh_token" ,refreshToken,
       {
          httpOnly : true , //set or modify by backend http req only not by js Script code
-         maxAge : toMs(7,"d")  // exoire in guardAuth directly 
+         maxAge : timeUtility.toMs(7,"d")  // exoire in guardAuth directly 
         // ,path: "/api/auth/refresh-token",
       }
      )

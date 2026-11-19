@@ -94,7 +94,7 @@ const UserSchema = new Schema({
     profilePicPath: String,
 coverImagePaths: [String],
 cvPath: String,
-
+changeCredentialTime: Date
 },
 
 {
